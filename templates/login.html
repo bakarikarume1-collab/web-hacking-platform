@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+    <video autoplay muted loop playsinline>
+            <source src="{{ url_for('static', filename='videos/bk.mp4') }}" type="video/mp4">
+        </video>
+
+    <div class="password-container">
+
+        <h2>Login Form</h2>
+
+        <div id="error-message" style="display: none; padding: 10px; margin-bottom: 15px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; text-align: center; font-size: 14px;"></div>
+
+        <form id="loginForm">
+            <label>Email:</label>
+            <input type="email" name="email" required>
+
+            <label>Password:</label>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" required>
+                    <span id="togglePassword">👁️</span>
+                </div>
+                <br>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="or-separator">
+            <span>OR</span>
+        </div>
+
+        <a href="{{ url_for('login_google') }}" class="google-btn">
+            <img src="{{ url_for('static', filename='images/google.png') }}" alt="Google">
+        </a>
+        
+        <div class="footer-links">
+            <a href="{{ url_for('register') }}">Sign Up</a>
+            <a href="{{ url_for('forgot_password') }}" style="color: #007bff;">Forgot Password?</a>
+        </div>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            // Zuia ukurasa usijirefreshe (Prevent page reload)
+            event.preventDefault(); 
+
+            const formData = new FormData(this);
+            const errorDiv = document.getElementById('error-message');
+
+            // Ficha box la error kila mtumiaji anapojaribu kubonyeza login upya
+            errorDiv.style.display = 'none';
+
+            // Tuma data kwenda kule kwenye Python Backend wetu
+            fetch('/login', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json()) // Badilisha jibu kuwa JSON
+            .then(data => {
+                if (data.status === 'success') {
+                    // Kama kila kitu kiko sawa (Login Success), mrushe hadi dashboard
+                    window.location.href = data.redirect;
+                } else {
+                    // Kama amekosea, weka ujumbe uliotoka kwenye Python na uonyeshe box jekundu
+                    errorDiv.innerText = data.message;
+                    errorDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorDiv.innerText = 'Invalid input';
+                errorDiv.style.display = 'block';
+            });
+        });
+
+            const box = document.querySelector(".password-container");
+
+        document.addEventListener("mousemove", (e) => {
+            let x = (window.innerWidth / 2 - e.clientX) / 25;
+            let y = (window.innerHeight / 2 - e.clientY) / 25;
+
+            box.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    </script>
+
+</body>
+</html>
