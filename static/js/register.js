@@ -1,33 +1,38 @@
 document.getElementById("registerForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Zuia form isijitume kawaida
+    e.preventDefault();
 
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirmPassword").value;
-    
-    // Validation ya msingi
+    const errorBox = document.getElementById("errorBox"); // Hii ni ile div yako
+
+    // Reset error box
+    errorBox.style.display = "none";
+    errorBox.innerText = "";
+
     if (password !== confirm) {
-        alert("Passwords do not match!");
+        errorBox.style.display = "block";
+        errorBox.innerText = "Passwords do not match!";
         return;
     }
 
-    // Tuma data kwenda kwenye server
     const formData = new FormData(this);
 
     fetch('/register', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json()) // Tunatarajia jibu la JSON
+    .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            alert("Registration successful!");
-            window.location.href = '/login'; // Hapa ndipo inakupeleka kwenye login
+            window.location.href = '/login';
         } else {
-            alert(data.message); // Hapa ndipo itaonyesha "Password must contain..."
+            // Hapa ndipo ujumbe unapelekwa kwenye box
+            errorBox.style.display = "block";
+            errorBox.innerText = data.message; 
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert("An error occurred. Please try again.");
+        errorBox.style.display = "block";
+        errorBox.innerText = "An error occurred. Please try again.";
     });
 });
