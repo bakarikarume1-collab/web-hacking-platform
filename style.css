@@ -1,0 +1,904 @@
+/*==================================================
+    KIGAMBONI TECH LABS
+    PROFESSIONAL CYBER SECURITY THEME
+===================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+    font-family:'Poppins',sans-serif;
+}
+
+:root{
+
+    --background:#05070f;
+    --secondary:#0b1320;
+    --card:#111827;
+    --accent:#00ff9d;
+    --blue:#00b7ff;
+    --red:#ff2e63;
+    --orange:#ff9800;
+    --white:#ffffff;
+    --gray:#b7b7b7;
+    --border:rgba(255,255,255,.08);
+
+}
+
+body{
+
+    background:var(--background);
+    color:white;
+    overflow-x:hidden;
+
+}
+
+/*=========================
+VIDEO BACKGROUND
+==========================*/
+
+#background-video{
+
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    z-index:-2;
+
+}
+
+.overlay{
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.70);
+
+    z-index:-1;
+
+}
+
+/*=========================
+SCROLLBAR
+==========================*/
+
+::-webkit-scrollbar{
+
+    width:12px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#000;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:var(--accent);
+    border-radius:50px;
+
+}
+
+/*=========================
+HEADER
+==========================*/
+
+header{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    padding:18px 8%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:rgba(5,7,15,.8);
+
+    backdrop-filter:blur(20px);
+
+    border-bottom:1px solid var(--border);
+
+    z-index:999;
+
+}
+
+.logo h1{
+
+    color:var(--accent);
+
+    font-size:28px;
+
+    text-shadow:0 0 15px var(--accent);
+
+}
+
+/*=========================
+NAVBAR
+==========================*/
+
+nav ul{
+
+    display:flex;
+
+    gap:25px;
+
+    list-style:none;
+
+}
+
+nav a{
+
+    text-decoration:none;
+
+    color:white;
+
+    transition:.4s;
+
+    font-weight:500;
+
+}
+
+nav a:hover{
+
+    color:var(--accent);
+
+}
+
+/*=========================
+HERO
+==========================*/
+
+.hero{
+
+    min-height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    padding:120px 10%;
+
+}
+
+.hero h1{
+
+    font-size:65px;
+
+    margin-bottom:10px;
+
+    color:var(--accent);
+
+    text-shadow:0 0 25px var(--accent);
+
+}
+
+.hero p{
+
+    max-width:900px;
+
+    font-size:20px;
+
+    line-height:1.9;
+
+    color:var(--gray);
+
+}
+
+/*=========================
+BUTTONS
+==========================*/
+
+.hero-buttons{
+
+    margin-top:40px;
+
+}
+
+.btn{
+
+    display:inline-block;
+
+    padding:15px 35px;
+
+    border-radius:50px;
+
+    background:var(--accent);
+
+    color:black;
+
+    font-weight:700;
+
+    text-decoration:none;
+
+    margin:10px;
+
+    transition:.4s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 0 30px var(--accent);
+
+}
+
+.btn-secondary{
+
+    background:transparent;
+
+    border:2px solid var(--accent);
+
+    color:white;
+
+}
+
+.btn-secondary:hover{
+
+    background:var(--accent);
+
+    color:black;
+
+}
+
+/*=========================
+SECTIONS
+==========================*/
+
+section{
+
+    padding:1px 10%;
+
+}
+
+section h2{
+
+    text-align:center;
+
+    font-size:40px;
+
+    color:var(--accent);
+
+    margin-bottom:30px;
+
+}
+
+/*=========================
+ABOUT
+==========================*/
+
+.about p{
+
+    max-width:1000px;
+
+    margin:auto;
+
+    text-align:center;
+
+    font-size:18px;
+
+    line-height:2;
+
+    color:var(--gray);
+
+}
+
+/*=========================
+LEVEL CARDS
+==========================*/
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+    gap:30px;
+
+    margin-top:50px;
+
+}
+
+.card{
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    padding:35px;
+
+    backdrop-filter:blur(15px);
+
+    transition:.4s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 0 30px rgba(0,255,157,.3);
+
+}
+
+.card h3{
+
+    color:var(--blue);
+
+    margin-bottom:20px;
+
+    font-size:28px;
+
+}
+
+.card p{
+
+    color:var(--gray);
+
+    line-height:1.8;
+
+    margin-bottom:25px;
+
+}
+
+.card a{
+
+    display:inline-block;
+
+    padding:12px 25px;
+
+    background:var(--accent);
+
+    color:black;
+
+    border-radius:30px;
+
+    text-decoration:none;
+
+    font-weight:700;
+
+}
+
+/*==================================================
+LESSON CARDS
+==================================================*/
+.lesson-card {
+  background: rgba(0,0,0,0.7);
+  border: 1px solid cyan;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 0 10px cyan;
+  transition: 0.3s ease;
+}
+
+.lesson-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px cyan;
+}
+
+.lesson-card h2{
+
+    color:var(--accent);
+
+    margin-bottom:20px;
+
+    font-size:34px;
+
+}
+
+.lesson-card h3{
+
+    color:var(--blue);
+
+    margin:25px 0 15px;
+
+    font-size:25px;
+
+}
+
+.lesson-card h4{
+
+    color:var(--orange);
+
+    margin:20px 0;
+
+}
+
+.lesson-card p{
+
+    color:#d8d8d8;
+
+    line-height:1.9;
+
+    margin-bottom:18px;
+
+    font-size:17px;
+
+}
+
+.lesson-card ul{
+
+    margin-left:25px;
+
+    margin-top:15px;
+
+}
+
+.lesson-card li{
+
+    margin:12px 0;
+
+    line-height:1.8;
+
+}
+
+.lesson-card ol{
+
+    margin-left:25px;
+
+    margin-top:15px;
+
+}
+
+/*==================================================
+CODE BLOCKS
+==================================================*/
+
+pre{
+
+    background:#0b0f18;
+
+    border-left:5px solid var(--accent);
+
+    border-radius:10px;
+
+    padding:18px;
+
+    overflow-x:auto;
+
+    margin:20px 0;
+
+}
+
+pre code{
+
+    color:#8df7ff;
+
+    font-size:15px;
+
+    font-family:Consolas,monospace;
+
+}
+
+code{
+
+    color:#00ff9d;
+
+}
+
+/*==================================================
+COMMAND LINE
+==================================================*/
+
+.command-line{
+
+    display:block;
+
+    background:#000;
+
+    color:#00ff00;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    margin:20px 0;
+
+    font-family:monospace;
+
+    overflow-x:auto;
+
+}
+
+/*==================================================
+TECHNICAL BOX
+==================================================*/
+
+.technical-deep-dive{
+
+    margin:35px 0;
+
+    padding:25px;
+
+    border-left:5px solid var(--blue);
+
+    background:rgba(0,183,255,.08);
+
+    border-radius:10px;
+
+}
+
+.technical-deep-dive h4{
+
+    margin-bottom:15px;
+
+}
+
+.technical-deep-dive p{
+
+    margin:0;
+
+}
+
+/*==================================================
+BLOCKQUOTE
+==================================================*/
+
+blockquote{
+
+    margin:18px 0;
+
+    padding:18px;
+
+    border-left:4px solid var(--accent);
+
+    background:rgba(255,255,255,.05);
+
+    border-radius:8px;
+
+    color:#dcdcdc;
+
+    line-height:1.8;
+
+}
+
+/*==================================================
+TABLE
+==================================================*/
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin:25px 0;
+
+}
+
+table th{
+
+    background:var(--accent);
+
+    color:#000;
+
+    padding:15px;
+
+}
+
+table td{
+
+    border:1px solid rgba(255,255,255,.1);
+
+    padding:14px;
+
+    color:#ddd;
+
+}
+
+table tr:nth-child(even){
+
+    background:rgba(255,255,255,.03);
+
+}
+
+/*==================================================
+VIDEOS
+==================================================*/
+
+video{
+
+    width:100%;
+
+    border-radius:15px;
+
+    margin:30px 0;
+
+    border:2px solid rgba(255,255,255,.08);
+
+}
+
+/*==================================================
+IMAGES
+==================================================*/
+
+.lesson-card img{
+
+    width:100%;
+
+    border-radius:12px;
+
+    margin:25px 0;
+
+    transition:.4s;
+
+    cursor:pointer;
+
+}
+
+.lesson-card img:hover{
+
+    transform:scale(1.02);
+
+}
+
+/*==================================================
+LEVEL BADGES
+==================================================*/
+
+.level-badge{
+
+    display:inline-block;
+
+    padding:12px 22px;
+
+    border-radius:50px;
+
+    font-weight:700;
+
+    margin:25px 0;
+
+}
+
+.badge-beginner{
+
+    background:#00c853;
+
+}
+
+.badge-intermediate{
+
+    background:#ff9800;
+
+}
+
+.badge-advanced{
+
+    background:#ff1744;
+
+}
+
+/*==================================================
+SUCCESS BOX
+==================================================*/
+
+.success-zone{
+
+    margin:60px 0;
+
+    padding:35px;
+
+    text-align:center;
+
+    border-radius:15px;
+
+    background:linear-gradient(90deg,#00c853,#00bfa5);
+
+    color:#000;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+.hidden {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.6s ease;
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* ============================= */
+/* GLITCH TEXT EFFECT */
+/* ============================= */
+
+.glitch {
+  position: relative;
+  color: cyan;
+  font-weight: bold;
+  text-shadow: 0 0 10px cyan;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.glitch::before {
+  color: red;
+  animation: glitchTop 2s infinite linear;
+}
+
+.glitch::after {
+  color: lime;
+  animation: glitchBottom 2s infinite linear;
+}
+
+@keyframes glitchTop {
+  0% { transform: translate(0,0); }
+  20% { transform: translate(-2px,-2px); }
+  40% { transform: translate(2px,0); }
+  60% { transform: translate(-1px,2px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes glitchBottom {
+  0% { transform: translate(0,0); }
+  20% { transform: translate(2px,2px); }
+  40% { transform: translate(-2px,0); }
+  60% { transform: translate(1px,-2px); }
+  100% { transform: translate(0,0); }
+}
+
+body {
+  background: black;
+  color: #00ffcc;
+  overflow-x: hidden;
+}
+
+.overlay {
+  background: rgba(0,0,0,0.6);
+}
+
+/* =========================
+   FEATURES SECTION
+========================= */
+.features {
+    padding: 60px 20px;
+    background: rgba(0,0,0,0.8);
+    text-align: center;
+    color: white;
+}
+
+.features h2 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: cyan;
+    text-shadow: 0 0 10px cyan;
+}
+
+/* GRID */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* CARD */
+.feature {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(0,255,255,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    transition: 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.feature:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 20px cyan;
+}
+
+/* TITLE */
+.feature h3 {
+    color: #00ffcc;
+    margin-bottom: 10px;
+}
+
+/* TEXT */
+.feature p {
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =========================
+   CTA SECTION
+========================= */
+.cta {
+    padding: 70px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,0,0,0.9));
+    color: white;
+}
+
+.cta h2 {
+    font-size: 30px;
+    color: cyan;
+    margin-bottom: 10px;
+}
+
+.cta p {
+    color: #bbb;
+    margin-bottom: 20px;
+}
+
+/* BUTTON */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: linear-gradient(90deg, cyan, #00ff99);
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px cyan;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+    background: black;
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid rgba(0,255,255,0.2);
+}
+
+footer p {
+    color: #777;
+    font-size: 13px;
+}
+
+/* =========================
+   RESPONSIVE FIX
+========================= */
+@media (max-width: 600px) {
+    .features h2,
+    .cta h2 {
+        font-size: 24px;
+    }
+}
