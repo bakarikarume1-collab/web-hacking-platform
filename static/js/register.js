@@ -1,35 +1,33 @@
-
-// TOGGLE PASSWORD
-document.getElementById("togglePassword").addEventListener("click", function () {
-    const pass = document.getElementById("password");
-
-    pass.type = pass.type === "password" ? "text" : "password";
-});
-
-// TOGGLE CONFIRM PASSWORD
-document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
-    const pass = document.getElementById("confirmPassword");
-
-    pass.type = pass.type === "password" ? "text" : "password";
-});
-
-
-// FORM VALIDATION
 document.getElementById("registerForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Zuia form isijitume kawaida
 
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirmPassword").value;
-    const errorBox = document.getElementById("errorBox");
-
-    errorBox.style.display = "none";
-
+    
+    // Validation ya msingi
     if (password !== confirm) {
-        errorBox.style.display = "block";
-        errorBox.innerText = "Passwords do not match!";
+        alert("Passwords do not match!");
         return;
     }
 
-    // kama sawa (hapa unaweza connect backend)
-    this.submit();
+    // Tuma data kwenda kwenye server
+    const formData = new FormData(this);
+
+    fetch('/register', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json()) // Tunatarajia jibu la JSON
+    .then(data => {
+        if (data.status === 'success') {
+            alert("Registration successful!");
+            window.location.href = '/login'; // Hapa ndipo inakupeleka kwenye login
+        } else {
+            alert(data.message); // Hapa ndipo itaonyesha "Password must contain..."
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("An error occurred. Please try again.");
+    });
 });
