@@ -99,7 +99,9 @@ def init_db():
             code_expiry TEXT,
             current_level INTEGER DEFAULT 6,
             failed_attempts INTEGER DEFAULT 0,
-            lockout_time TEXT
+            lockout_time TEXT,
+            ip_address (TEXT),
+            last_attempt_time (TEXT)
         )
     """)
     conn.commit()
@@ -242,57 +244,64 @@ def register():
 #=======================================
 #         LOGIN PAGE
 #=======================================
-
 @app.route("/login", methods=["GET", "POST"])
 @limiter.limit("5 per minute")
 def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
+        user_ip = request.remote_addr  # IP ya mtumiaji
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
         hashed_password = hash_password(password)
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
+        # Tunachukua data zote muhimu
         cursor.execute("SELECT password, failed_attempts, lockout_time FROM users WHERE email=?", (email,))
         user_record = cursor.fetchone()
 
         if user_record:
             db_password, failed_attempts, lockout_time = user_record
 
+            # Check Lockout
             if lockout_time:
                 lockout_datetime = datetime.strptime(lockout_time, "%Y-%m-%d %H:%M:%S")
                 if datetime.now() < lockout_datetime:
                     conn.close()
                     remaining_mins = int((lockout_datetime - datetime.now()).total_seconds() / 60)
-                    return jsonify({"status": "error", "message": f"temporary blocked for {remaining_mins} minutes."})
+                    return jsonify({"status": "error", "message": f"Blocked for {remaining_mins} mins."})
                 else:
                     cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL WHERE email=?", (email,))
                     conn.commit()
                     failed_attempts = 0
 
+            # Password Check
             if db_password == hashed_password:
-                cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL WHERE email=?", (email,))
+                # Login Success: Record IP na Reset
+                cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL, ip_address=?, last_attempt_time=? WHERE email=?", 
+                               (user_ip, current_time, email))
                 conn.commit()
                 conn.close()
 
                 token = generate_token(email, is_admin=False)
                 response = make_response(jsonify({"status": "success", "redirect": url_for("lesson_list")}))
-                
-                # REKEBISHO HAPA: Badilisha 'Strict' kuwa 'Lax' ili kuendana na flow ya Google OAuth
                 response.set_cookie("auth_token", token, httponly=True, samesite='Lax')
                 return response
             
             else:
+                # Login Failed: Record IP na Muda
                 failed_attempts += 1
+                new_lockout_time = None
+                message = f"Invalid credential. Remain {5 - failed_attempts} attempts."
+
                 if failed_attempts >= 5:
                     new_lockout_time = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
-                    cursor.execute("UPDATE users SET failed_attempts=?, lockout_time=? WHERE email=?", (failed_attempts, new_lockout_time, email))
-                    message = "Wrong password or email. account is temporarily blocked for 1 hour."
-                else:
-                    cursor.execute("UPDATE users SET failed_attempts=? WHERE email=?", (failed_attempts, email))
-                    message = f"Invalid credential. remain {5 - failed_attempts}. attempts"
-
+                    message = "Account blocked for 1 hour."
+                
+                cursor.execute("UPDATE users SET failed_attempts=?, lockout_time=?, ip_address=?, last_attempt_time=? WHERE email=?", 
+                               (failed_attempts, new_lockout_time, user_ip, current_time, email))
                 conn.commit()
                 conn.close()
                 return jsonify({"status": "error", "message": message})
@@ -514,7 +523,16 @@ def change_password():
 
     return render_template("change_password.html")
 
-
+@app.route("/admin/logs")
+def view_logs():
+    # Hapa unaweza kuongeza "login required" ili mtu asiye admin asione logs
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    # Tunachagua watumiaji wote ambao wamefanya angalau attempt moja
+    cursor.execute("SELECT email, failed_attempts, ip_address, last_attempt_time FROM users WHERE failed_attempts > 0 OR last_attempt_time IS NOT NULL")
+    logs = cursor.fetchall()
+    conn.close()
+    return render_template("logs.html", logs=logs)
 # ========================================================
 # SECURED PROTECTED CLASSROOM PAGES 🔒
 # ========================================================
