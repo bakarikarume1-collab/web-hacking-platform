@@ -261,9 +261,9 @@ def login():
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
         
-        # FIX: Kupata IP halisi kutoka kwa Render/Proxy
+        # FIX: Chukua IP ya kwanza tu (IP yako halisi)
         if request.headers.getlist("X-Forwarded-For"):
-            user_ip = request.headers.getlist("X-Forwarded-For")[0]
+            user_ip = request.headers.getlist("X-Forwarded-For")[0].split(',')[0].strip()
         else:
             user_ip = request.remote_addr
             
@@ -290,6 +290,9 @@ def login():
                     failed_attempts = 0
 
             if db_password == hashed_password:
+                # SUCCESS
+                cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                               (email, user_ip, current_time, "Success"))
                 cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL, ip_address=?, last_attempt_time=? WHERE email=?", 
                                (user_ip, current_time, email))
                 conn.commit()
@@ -299,8 +302,11 @@ def login():
                 response.set_cookie("auth_token", token, httponly=True, samesite='Lax')
                 return response
             else:
+                # FAILED
                 failed_attempts += 1
                 new_lockout_time = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S") if failed_attempts >= 5 else None
+                cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                               (email, user_ip, current_time, "Failed"))
                 cursor.execute("UPDATE users SET failed_attempts=?, lockout_time=?, ip_address=?, last_attempt_time=? WHERE email=?", 
                                (failed_attempts, new_lockout_time, user_ip, current_time, email))
                 conn.commit()
@@ -308,9 +314,9 @@ def login():
                 return jsonify({"status": "error", "message": "Invalid credentials."})
         
         else:
-            # Email haipo: Hifadhi kwenye login_attempts
-            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time) VALUES (?, ?, ?)", 
-                           (email, user_ip, current_time))
+            # FAILED (Email haipo)
+            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                           (email, user_ip, current_time, "Failed"))
             conn.commit()
             conn.close()
             return jsonify({"status": "error", "message": "Invalid credentials."})
