@@ -1,0 +1,232 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: black;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* =========================
+   BACKGROUND VIDEO
+========================= */
+video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    filter: brightness(40%) contrast(120%);
+}
+
+/* dark overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: -1;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(0,0,0,0.6);
+    border-bottom: 1px solid rgba(0,255,255,0.2);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* LOGO */
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: cyan;
+    letter-spacing: 2px;
+}
+
+/* NAV LINKS */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.nav-links li a:hover {
+    color: cyan;
+    text-shadow: 0 0 10px cyan;
+}
+
+/* MOBILE MENU ICON */
+.menu-icon {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
+    color: cyan;
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+.hero-container {
+    text-align: center;
+    margin-top: 120px;
+    padding: 20px;
+}
+
+.hero-container h1 {
+    font-size: 38px;
+    line-height: 1.4;
+    text-shadow: 0 0 10px cyan;
+}
+
+/* DANGER ZONE TEXT */
+.danger-zone {
+    color: red;
+    text-shadow: 0 0 15px red;
+    font-weight: bold;
+}
+
+/* TAGLINE */
+.tagline {
+    margin-top: 15px;
+    color: #ccc;
+    font-size: 16px;
+}
+
+/* WARNING BOX */
+.educational-note {
+    margin: 20px auto;
+    padding: 10px;
+    width: fit-content;
+    border: 1px solid orange;
+    background: rgba(255,165,0,0.1);
+    color: orange;
+    border-radius: 5px;
+}
+
+/* BUTTON */
+.cyber-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: linear-gradient(90deg, cyan, #00ff99);
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.cyber-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px cyan;
+}
+
+/* =========================
+   RESPONSIVE NAVBAR
+========================= */
+@media (max-width: 768px) {
+    .menu-icon {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 70px;
+        right: 0;
+        flex-direction: column;
+        background: rgba(0,0,0,0.9);
+        width: 200px;
+        padding: 20px;
+        display: none;
+        border-left: 1px solid cyan;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+}
+/* Desktop */
+.menu-icon{
+    display:none;
+    font-size:30px;
+    color:#00ffff;
+    cursor:pointer;
+}
+
+.nav-links{
+    display:flex;
+    list-style:none;
+    gap:20px;
+}
+
+/* Mobile */
+@media screen and (max-width:768px){
+
+    .menu-icon{
+        display:block;
+        z-index:1001;
+    }
+
+    .nav-links{
+        position:fixed;
+        top:0;
+        right:-260px;
+        width:250px;
+        height:100vh;
+        background:#111;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:30px;
+        transition:.4s;
+        box-shadow:-5px 0 20px rgba(0,255,255,.3);
+    }
+
+    .nav-links.active{
+        right:0;
+    }
+
+    .nav-links li{
+        list-style:none;
+    }
+
+    .nav-links li a{
+        color:white;
+        text-decoration:none;
+        font-size:20px;
+        transition:.3s;
+    }
+
+    .nav-links li a:hover{
+        color:cyan;
+    }
+}
