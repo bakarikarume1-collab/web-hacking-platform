@@ -525,14 +525,15 @@ def change_password():
 
 @app.route("/admiini/logs")
 def view_logs():
-    # Hapa unaweza kuongeza "login required" ili mtu asiye admin asione logs
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    # Tunachagua watumiaji wote ambao wamefanya angalau attempt moja
-    cursor.execute("SELECT email, failed_attempts, ip_address, last_attempt_time FROM users WHERE failed_attempts > 0 OR last_attempt_time IS NOT NULL")
-    logs = cursor.fetchall()
-    conn.close()
-    return render_template("logs.html", logs=logs)
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT email, failed_attempts, ip_address, last_attempt_time FROM users WHERE failed_attempts > 0 OR last_attempt_time IS NOT NULL")
+        logs = cursor.fetchall()
+        conn.close()
+        return render_template("logs.html", logs=logs)
+    except Exception as e:
+        return f"Database Error: {str(e)}" # Hii itakuonyesha kosa halisi kwenye browser
 # ========================================================
 # SECURED PROTECTED CLASSROOM PAGES 🔒
 # ========================================================
