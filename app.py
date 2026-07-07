@@ -254,40 +254,49 @@ def register():
 #=======================================
 #         LOGIN PAGE
 #=======================================
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
-    if request.method == "POST":
-        email = request.form.get("email", "").strip()
-        password = request.form.get("password", "").strip()
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "").strip()
+    
+    # 1. Kupata IP halisi (Fix ya Render Proxy)
+    if request.headers.getlist("X-Forwarded-For"):
+        user_ip = request.headers.getlist("X-Forwarded-For")[0]
+    else:
+        user_ip = request.remote_addr
         
-        # Kupata IP halisi
-        user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(',')[0]
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    hashed_password = hash_password(password)
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # 2. Angalia kama user yupo
+    cursor.execute("SELECT password FROM users WHERE email=?", (email,))
+    user_record = cursor.fetchone()
+
+    if user_record and user_record[0] == hashed_password:
+        # SUCCESS: Rekodi kwenye log na redirect
+        cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                       (email, user_ip, current_time, "Success"))
+        conn.commit()
+        conn.close()
         
-        hashed_password = hash_password(password)
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT password FROM users WHERE email=?", (email,))
-        user_record = cursor.fetchone()
-
-        if user_record and user_record[0] == hashed_password:
-            # SUCCESS
-            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
-                           (email, user_ip, current_time, "Success"))
-            conn.commit()
-            conn.close()
-            # ... (Endelea na login logic yako)
-            return jsonify({"status": "success"})
-        else:
-            # FAILED
-            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
-                           (email, user_ip, current_time, "Failed"))
-            conn.commit()
-            conn.close()
-            return jsonify({"status": "error", "message": "Invalid credentials."})
-
-    return render_template("login.html")
+        # Hapa ndipo tunatuma URL sahihi ya kuelekea
+        return jsonify({
+            "status": "success", 
+            "redirect": url_for("lesson_list") 
+        })
+    else:
+        # FAILED: Rekodi kwenye log
+        cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                       (email, user_ip, current_time, "Failed"))
+        conn.commit()
+        conn.close()
+        
+        # Rudisha error message
+        return jsonify({"status": "error", "message": "Invalid email or password."})
 #====================================================
 #    GOOGLE OAUTH LOGIN ROUTES
 #====================================================
