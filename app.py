@@ -267,7 +267,7 @@ def login():
         else:
             user_ip = request.remote_addr
             
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = (datetime.utcnow() + timedelta(hours=3)).strftime("%Y-%m-%d %H:%M:%S")
         hashed_password = hash_password(password)
         
         conn = sqlite3.connect(DB_PATH)
