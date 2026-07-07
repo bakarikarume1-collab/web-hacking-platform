@@ -105,15 +105,15 @@ def init_db():
         )
     """)
     # Katika init_db(), hakikisha una table hii:
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS login_attempts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT,
-        ip_address TEXT,
-        attempt_time TEXT,
-        status TEXT
-    )
-""")
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS login_attempts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            ip_address TEXT,
+            attempt_time TEXT,
+            status TEXT
+        )
+    """)
     conn.commit()
     conn.close()
 
