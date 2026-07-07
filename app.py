@@ -233,7 +233,7 @@ def register():
             conn.commit()
             return jsonify({"status": "success", "redirect": url_for("login")})
         except sqlite3.IntegrityError:
-            return jsonify({"status": "error", "message": "Username or email already exists!"})
+            return jsonify({"status": "error", "message": "User already exists!"})
         finally:
             conn.close()
 
