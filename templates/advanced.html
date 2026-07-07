@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Advanced Web Security | Mr Karume Tech Labs</title>
+
+<link rel="stylesheet" href="static/css/style.css">
+
+</head>
+
+
+<body>
+
+<!--================ BACKGROUND =================-->
+
+<video autoplay muted loop id="background-video">
+    <source src="static/videos/bk.mp4" type="video/mp4">
+</video>
+
+<div class="overlay"></div>
+
+<!--================ HEADER =================-->
+
+<header>
+
+
+    <div class="logo">
+        <h1>Mr Karume Tech Labs</h1>
+    </div>
+
+    <div class="menu-icon" id="menuIcon">
+        ☰
+    </div>
+
+    <nav id="navMenu">
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+            <li><a href="{{ url_for('oswap') }}">Basics</a></li>
+            <li><a href="{{ url_for('xss') }}">Intermediate</a></li>
+            <li><a href="{{ url_for('advanced') }}">Advanced</a></li>
+            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<!--================ HERO =================-->
+
+<section class="hero">
+
+<h1>Advanced Web Exploitation</h1>
+
+<p>
+This is the expert level of web security.
+Here we explore vulnerabilities that can lead to
+server compromise, internal network access,
+and full system takeover.
+</p>
+
+</section>
+
+<!--================ INTRO =================-->
+
+<section>
+
+<span class="level-badge badge-advanced">
+Advanced Level
+</span>
+
+<!--================ SSRF =================-->
+
+<div class="lesson-card">
+
+<h2>Server-Side Request Forgery (SSRF)</h2>
+
+<p>
+SSRF occurs when an attacker forces a server to make requests
+to internal or external systems.
+</p>
+
+<ul>
+<li>Access internal APIs</li>
+<li>Scan internal networks</li>
+<li>Bypass firewalls</li>
+</ul>
+
+<h3>Example Scenario</h3>
+
+<pre><code>
+http://example.com/fetch?url=http://127.0.0.1/admin
+</code></pre>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Servers should never trust user-controlled URLs.
+</p>
+
+</div>
+
+</div>
+
+<!--================ XXE =================-->
+
+<div class="lesson-card">
+
+<h2>XML External Entity (XXE)</h2>
+
+<p>
+XXE occurs when XML parsers process external entities
+that can read internal files or make network requests.
+</p>
+
+<h3>Example Payload</h3>
+
+<pre><code>
+<!DOCTYPE foo [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+</code></pre>
+
+<p>
+If vulnerable, attacker can read system files.
+</p>
+
+</div>
+
+<!--================ FILE UPLOAD TO RCE =================-->
+
+<div class="lesson-card">
+
+<h2>Arbitrary File Upload → Remote Code Execution (RCE)</h2>
+
+<p>
+File upload vulnerabilities occur when an application allows users
+to upload files without proper validation.
+Attackers can upload malicious scripts instead of images.
+</p>
+
+<h3>Attack Scenario</h3>
+
+<pre><code>
+shell.php
+</code></pre>
+
+<p>
+If uploaded to a public directory, it can be executed on the server:
+</p>
+
+<pre><code>
+https://target.com/uploads/shell.php?cmd=whoami
+</code></pre>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Always validate file type, extension, and content on the server side.
+Never trust client-side checks.
+</p>
+
+</div>
+
+</div>
+
+<!--================ JWT ATTACKS =================-->
+
+<div class="lesson-card">
+
+<h2>JSON Web Token (JWT) Attacks</h2>
+
+<p>
+JWT is used for authentication in modern APIs.
+However, misconfiguration can lead to account takeover.
+</p>
+
+<h3>Common Weaknesses</h3>
+
+<ul>
+<li>None algorithm acceptance</li>
+<li>Weak secret keys</li>
+<li>Token tampering</li>
+</ul>
+
+<h3>Example JWT Structure</h3>
+
+<pre><code>
+header.payload.signature
+</code></pre>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+If the server does not properly verify the signature,
+an attacker can modify the payload and escalate privileges.
+</p>
+
+</div>
+
+</div>
+
+<!--================ INSECURE DESERIALIZATION =================-->
+
+<div class="lesson-card">
+
+<h2>Insecure Deserialization</h2>
+
+<p>
+Deserialization vulnerabilities occur when applications
+convert untrusted data into objects without validation.
+</p>
+
+<h3>Impact</h3>
+
+<ul>
+<li>Remote Code Execution</li>
+<li>Privilege Escalation</li>
+<li>Data manipulation</li>
+</ul>
+
+<h3>Example Scenario</h3>
+
+<pre><code>
+serialized_object = user_input
+</code></pre>
+
+<p>
+If attacker controls serialized data,
+they can inject malicious objects into the system.
+</p>
+
+</div>
+
+<!--================ API SECURITY =================-->
+
+<div class="lesson-card">
+
+<h2>API Security Vulnerabilities</h2>
+
+<p>
+Modern applications rely on APIs for communication.
+Poor API security leads to massive data leaks.
+</p>
+
+<h3>Common Issues</h3>
+
+<ul>
+<li>Broken Authentication</li>
+<li>Excessive Data Exposure</li>
+<li>Lack of Rate Limiting</li>
+<li>Improper Authorization</li>
+</ul>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+APIs must enforce strict authentication and authorization
+for every endpoint, not just login endpoints.
+</p>
+
+</div>
+
+</div>
+
+<!--================ AUTHENTICATION BYPASS =================-->
+
+<div class="lesson-card">
+
+<h2>Authentication Bypass (Advanced Techniques)</h2>
+
+<p>
+At this level, attackers combine multiple weaknesses
+to bypass authentication systems entirely.
+</p>
+
+<ul>
+<li>SQL Injection login bypass</li>
+<li>JWT tampering</li>
+<li>Session fixation</li>
+<li>Broken access control chaining</li>
+</ul>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Real attacks rarely rely on a single vulnerability.
+They chain multiple small flaws to gain full system access.
+</p>
+
+</div>
+
+</div>
+
+<!--================ BUSINESS LOGIC ATTACKS =================-->
+
+<div class="lesson-card">
+
+<h2>Business Logic Vulnerabilities</h2>
+
+<p>
+These occur when application logic is flawed,
+even if no technical vulnerability exists.
+</p>
+
+<h3>Example Scenario</h3>
+
+<p>
+A system that allows discount codes to be applied multiple times
+due to missing validation.
+</p>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Security is not only about code,
+but also about how the system is designed logically.
+</p>
+
+</div>
+
+</div>
+
+<!--================ RACE CONDITIONS =================-->
+
+<div class="lesson-card">
+
+<h2>Race Conditions</h2>
+
+<p>
+Race conditions occur when multiple requests
+are processed at the same time,
+leading to unexpected behavior.
+</p>
+
+<h3>Example Scenario</h3>
+
+<p>
+Two withdrawal requests are sent simultaneously
+before balance is updated.
+</p>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Proper locking mechanisms must be implemented
+to prevent simultaneous execution issues.
+</p>
+
+</div>
+
+</div>
+
+<!--================ ATTACK CHAIN =================-->
+
+<div class="lesson-card">
+
+<h2>Real-World Attack Chain Example</h2>
+
+<p>
+A real attacker does not use one vulnerability.
+They combine multiple flaws:
+</p>
+
+<ol>
+<li>Use XSS to steal admin cookie</li>
+<li>Use IDOR to access API endpoints</li>
+<li>Exploit SQL Injection for database access</li>
+<li>Upload malicious file for RCE</li>
+</ol>
+
+<div class="technical-deep-dive">
+
+<h4>Key Lesson</h4>
+
+<p>
+Security is about defending every layer,
+not just fixing one bug.
+</p>
+
+</div>
+
+</div>
+
+<!--================ FINAL MESSAGE =================-->
+
+<div class="lesson-card">
+
+<h2>Final Stage Completed</h2>
+
+<p>
+You have now reached the expert level of web security understanding.
+You have learned how real attackers think and operate.
+</p>
+
+<div class="success-zone">
+
+🏆 CONGRATULATIONS!
+
+You have completed:
+<br><br>
+
+✔ Basics of Web Security<br>
+✔ OWASP Top 10<br>
+✔ SQL Injection Techniques<br>
+✔ XSS & CSRF<br>
+✔ SSRF & XXE<br>
+✔ RCE & File Upload Exploits<br>
+✔ JWT & API Security<br>
+✔ Advanced Attack Chaining<br>
+
+</div>
+
+</div>
+
+<!--================ NAVIGATION =================-->
+
+<div class="lesson-card" style="text-align:center;">
+
+<h2>What Next?</h2>
+
+<p>Move to Services or Contact page</p>
+
+<a href="{{ url_for('services') }}" class="btn">Services</a>
+<a href="{{ url_for('contact') }}" class="btn btn-secondary">Contact</a>
+
+</div>
+
+<!--================ FOOTER =================-->
+
+<footer>
+
+<p style="text-align:center; padding:30px; color:gray;">
+
+© 2026 Mr karume Tech Labs- Advanced Cybersecurity Academy
+
+</p>
+
+</footer>
+<script src="static/js/script.js"></script>
+
+</body>
+</html>

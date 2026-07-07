@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Web Hacking Basics | Kigamboni Tech Labs</title>
+
+<link rel="stylesheet" href="static/css/style.css">
+
+</head>
+
+
+<body>
+
+<!--================ VIDEO BACKGROUND =================-->
+
+<video autoplay muted loop id="background-video">
+
+    <source src="static/videos/bk.mp4" type="video/mp4">
+
+</video>
+
+<div class="overlay"></div>
+
+<!--================ HEADER =================-->
+
+<header>
+
+    <div class="logo">
+        <h1>Mr Karume Tech Labs</h1>
+    </div>
+
+    <div class="menu-icon" id="menuIcon">
+        ☰
+    </div>
+
+    <nav id="navMenu">
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+            <li><a href="{{ url_for('oswap') }}">Basics</a></li>
+            <li><a href="{{ url_for('xss') }}">Intermediate</a></li>
+            <li><a href="{{ url_for('advanced') }}">Advanced</a></li>
+            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<!--================ HERO =================-->
+
+<section class="hero">
+
+<h1>Web Hacking Fundamentals</h1>
+
+<p>
+
+Before learning SQL Injection,
+
+Cross Site Scripting,
+
+or Remote Code Execution,
+
+every security engineer must understand
+
+how web applications communicate.
+
+</p>
+
+</section>
+
+<!--================ LESSONS =================-->
+
+<section>
+
+<span class="level-badge badge-beginner">
+
+Beginner Level
+
+</span>
+
+<div class="lesson-card">
+
+<h2>Introduction to Web Hacking</h2>
+
+<p>
+
+Web hacking is the process of identifying,
+
+understanding,
+
+and responsibly testing weaknesses found in web applications.
+
+Modern websites are built using browsers,
+
+servers,
+
+databases,
+
+and APIs.
+
+Every action you perform,
+
+such as logging in,
+
+searching,
+
+or uploading a file,
+
+is converted into HTTP requests.
+
+Understanding these requests is the first skill of every penetration tester.
+
+</p>
+
+<div class="technical-deep-dive">
+
+<h4>Professional Tip</h4>
+
+<p>
+
+A professional hacker rarely attacks a website immediately.
+
+Instead,
+
+they spend most of their time understanding
+
+how the application behaves,
+
+what technologies it uses,
+
+and where user input reaches the backend.
+
+</p>
+
+</div>
+
+</div>
+
+<!--================================-->
+
+<div class="lesson-card">
+
+<h2>Understanding HTTP</h2>
+
+<p>
+
+HTTP (HyperText Transfer Protocol)
+
+is the protocol responsible for communication
+
+between a client (browser)
+
+and a web server.
+
+Every webpage,
+
+image,
+
+video,
+
+login request,
+
+or API request
+
+travels using HTTP or HTTPS.
+
+</p>
+
+<h3>Example HTTP Request</h3>
+
+<pre><code>
+
+GET /index.html HTTP/1.1
+
+Host: example.com
+
+User-Agent: Chrome
+
+Accept: text/html
+
+</code></pre>
+
+<p>
+
+The browser sends this request to the server.
+
+The server processes it
+
+and returns an HTTP Response.
+
+</p>
+
+</div>
+
+<!--================================-->
+
+<div class="lesson-card">
+
+<h2>HTTP Request vs HTTP Response</h2>
+
+<table>
+
+<tr>
+
+<th>Request</th>
+
+<th>Response</th>
+
+</tr>
+
+<tr>
+
+<td>Sent by Browser</td>
+
+<td>Sent by Server</td>
+
+</tr>
+
+<tr>
+
+<td>Contains Method</td>
+
+<td>Contains Status Code</td>
+
+</tr>
+
+<tr>
+
+<td>Contains Headers</td>
+
+<td>Contains Headers</td>
+
+</tr>
+
+<tr>
+
+<td>Contains Body</td>
+
+<td>Contains HTML or JSON</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<!--================================-->
+
+<div class="lesson-card">
+
+<h2>HTTP Methods</h2>
+
+<ul>
+
+<li><b>GET</b> → Retrieve information</li>
+
+<li><b>POST</b> → Send new information</li>
+
+<li><b>PUT</b> → Replace existing data</li>
+
+<li><b>PATCH</b> → Update part of data</li>
+
+<li><b>DELETE</b> → Delete information</li>
+
+</ul>
+
+<div class="technical-deep-dive">
+
+<h4>Security Note</h4>
+
+<p>
+
+Many broken access control vulnerabilities
+
+occur because developers
+
+forget to verify
+
+whether a user is allowed
+
+to use dangerous HTTP methods
+
+like PUT or DELETE.
+
+</p>
+
+</div>
+
+</div>
+
+
+<!--================ HTTP ANATOMY =================-->
+
+<div class="lesson-card">
+
+<h2>Anatomy of an HTTP Request</h2>
+
+<p>
+Every HTTP request is made of four main parts:
+Request Line, Headers, Empty Line, and Body.
+Understanding this structure is essential for web security testing.
+</p>
+
+<h3>1. Request Line</h3>
+
+<pre><code>
+GET /login HTTP/1.1
+</code></pre>
+
+<p>
+This line contains:
+<ul>
+<li><b>HTTP Method</b> (GET, POST, etc.)</li>
+<li><b>Request Path</b> (/login, /api/user)</li>
+<li><b>HTTP Version</b> (HTTP/1.1 or HTTP/2)</li>
+</ul>
+</p>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Attackers often change HTTP methods (GET → POST → PUT)
+to bypass weak access controls.
+</p>
+
+</div>
+
+</div>
+
+<!--================ HEADERS =================-->
+
+<div class="lesson-card">
+
+<h2>HTTP Headers</h2>
+
+<p>
+Headers are key-value pairs that describe the request.
+They carry important metadata between client and server.
+</p>
+
+<ul>
+<li><code>Host</code> → Target domain</li>
+<li><code>User-Agent</code> → Browser or tool identity</li>
+<li><code>Cookie</code> → Session identifier</li>
+<li><code>Authorization</code> → Login tokens (JWT, Bearer)</li>
+<li><code>Content-Type</code> → Format of request body</li>
+</ul>
+
+<div class="technical-deep-dive">
+
+<h4>Real Attack Scenario</h4>
+
+<p>
+Changing the <code>User-Agent</code> can bypass simple WAF filters
+because some systems block only known tool signatures like sqlmap.
+</p>
+
+</div>
+
+</div>
+
+<!--================ COOKIES =================-->
+
+<div class="lesson-card">
+
+<h2>Cookies & Sessions</h2>
+
+<p>
+HTTP is stateless — meaning the server does not remember users.
+Cookies solve this problem by storing session identifiers.
+</p>
+
+<h3>Example Cookie</h3>
+
+<pre><code>
+Cookie: session_id=abc123xyz
+</code></pre>
+
+<p>
+If an attacker steals this cookie,
+they can impersonate the user without a password.
+</p>
+
+<div class="technical-deep-dive">
+
+<h4>Important Note</h4>
+
+<p>
+Weak session generation (like incremental IDs)
+can allow attackers to guess valid sessions.
+</p>
+
+</div>
+
+</div>
+
+<!--================ BURP SUITE =================-->
+
+<div class="lesson-card">
+
+<h2>Introduction to Burp Suite</h2>
+
+<p>
+Burp Suite is a web security testing tool
+used to intercept and modify HTTP traffic.
+</p>
+
+<h3>Main Features</h3>
+
+<ul>
+<li>Proxy → Intercept requests</li>
+<li>Repeater → Modify and resend requests</li>
+<li>Intruder → Automated attacks (fuzzing, brute force)</li>
+</ul>
+
+<div class="technical-deep-dive">
+
+<h4>How It Works</h4>
+
+<p>
+Burp Suite acts as a Man-in-the-Middle (MITM)
+between browser and server,
+allowing full control of requests before they reach backend.
+</p>
+
+</div>
+
+</div>
+
+<!--================ CLIENT SIDE SECURITY =================-->
+
+<div class="lesson-card">
+
+<h2>Client-Side Validation Weakness</h2>
+
+<p>
+Frontend validation (HTML + JavaScript) is NOT security.
+It can be bypassed easily using browser tools or intercepting proxies.
+</p>
+
+<h3>Example</h3>
+
+<pre><code>
+<input type="number" max="500">
+</code></pre>
+
+<p>
+Even if the browser limits input to 500,
+an attacker can modify the request using Burp Suite
+and send any value to the server.
+</p>
+
+</div>
+
+<!--================ END OF PART 2 =================-->
+
+<!--================ EMPTY LINE =================-->
+
+<div class="lesson-card">
+
+<h2>The Empty Line (CRLF)</h2>
+
+<p>
+After HTTP headers, there is always a mandatory empty line.
+This is called CRLF (Carriage Return Line Feed).
+It tells the server that headers have ended and body begins.
+</p>
+
+<pre><code>
+GET /login HTTP/1.1
+Host: example.com
+User-Agent: Chrome
+
+(username and password start here)
+</code></pre>
+
+<div class="technical-deep-dive">
+
+<h4>Security Insight</h4>
+
+<p>
+Improper parsing of CRLF can lead to HTTP request smuggling vulnerabilities.
+</p>
+
+</div>
+
+</div>
+
+<!--================ MESSAGE BODY =================-->
+
+<div class="lesson-card">
+
+<h2>HTTP Message Body</h2>
+
+<p>
+The body contains data sent to the server.
+It is mostly used in POST, PUT, and PATCH requests.
+</p>
+
+<h3>Example POST Request</h3>
+
+<pre><code>
+POST /login HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=12345
+</code></pre>
+
+<p>
+This is where user input becomes dangerous.
+Most vulnerabilities like SQL Injection and XSS originate from request bodies.
+</p>
+
+</div>
+
+<!--================ FULL REQUEST FLOW =================-->
+
+<div class="lesson-card">
+
+<h2>Full HTTP Request Flow</h2>
+
+<p>
+When you click a button on a website, the following happens:
+</p>
+
+<ul>
+<li>Browser builds HTTP request</li>
+<li>Request is sent to server</li>
+<li>Server processes input</li>
+<li>Database may be queried</li>
+<li>Response is returned</li>
+<li>Browser renders result</li>
+</ul>
+
+<div class="technical-deep-dive">
+
+<h4>Attacker Perspective</h4>
+
+<p>
+A hacker intercepts this flow using tools like Burp Suite,
+modifies the request before it reaches the server,
+and observes how backend reacts.
+</p>
+
+</div>
+
+</div>
+
+<!--================ PRACTICAL THINKING =================-->
+
+<div class="lesson-card">
+
+<h2>Mini Practical Scenario</h2>
+
+<p>
+Imagine a login system:
+</p>
+
+<pre><code>
+POST /login HTTP/1.1
+username=admin
+password=admin123
+</code></pre>
+
+<p>
+If the application does not properly validate input,
+an attacker may manipulate the request
+to bypass authentication or inject SQL payloads.
+</p>
+
+</div>
+
+<!--================ SUMMARY =================-->
+
+<div class="lesson-card">
+
+<h2>Summary of Basics</h2>
+
+<ul>
+<li>HTTP is stateless communication protocol</li>
+<li>Requests have 4 main parts</li>
+<li>Headers carry metadata</li>
+<li>Cookies store sessions</li>
+<li>Body contains user input</li>
+<li>Everything can be intercepted using proxies</li>
+</ul>
+
+<div class="success-zone">
+
+🎉 You have completed Web Hacking Basics!
+
+</div>
+
+</div>
+
+<!--================ NAVIGATION =================-->
+
+<div class="lesson-card" style="text-align:center;">
+
+<h2>Next Step</h2>
+
+<p>Continue to Intermediate Level (OWASP Top 10)</p>
+
+<a href="{{ url_for('xss') }}" class="btn">Go to Intermediate →</a>
+
+</div>
+
+<!--================ FOOTER =================-->
+
+<footer>
+
+<p style="text-align:center; padding:30px; color:gray;">
+
+© 2026 Mr karume Tech Labs - All Rights Reserved
+
+</p>
+
+</footer>
+<script src="static/js/script.js"></script>
+</body>
+</html>
