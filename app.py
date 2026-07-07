@@ -104,6 +104,14 @@ def init_db():
             last_attempt_time TEXT
         )
     """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS login_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT,
+        ip_address TEXT,
+        attempt_time TEXT
+    )
+""")
     conn.commit()
     conn.close()
 
@@ -250,15 +258,14 @@ def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
-        user_ip = request.remote_addr  # IP ya mtumiaji
+        user_ip = request.remote_addr
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         hashed_password = hash_password(password)
-
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
-        # Tunachukua data zote muhimu
+        # 1. Angalia kama user yupo
         cursor.execute("SELECT password, failed_attempts, lockout_time FROM users WHERE email=?", (email,))
         user_record = cursor.fetchone()
 
@@ -270,47 +277,38 @@ def login():
                 lockout_datetime = datetime.strptime(lockout_time, "%Y-%m-%d %H:%M:%S")
                 if datetime.now() < lockout_datetime:
                     conn.close()
-                    remaining_mins = int((lockout_datetime - datetime.now()).total_seconds() / 60)
-                    return jsonify({"status": "error", "message": f"Blocked for {remaining_mins} mins."})
+                    return jsonify({"status": "error", "message": "Account temporarily blocked."})
                 else:
                     cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL WHERE email=?", (email,))
-                    conn.commit()
                     failed_attempts = 0
 
-            # Password Check
             if db_password == hashed_password:
-                # Login Success: Record IP na Reset
                 cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL, ip_address=?, last_attempt_time=? WHERE email=?", 
                                (user_ip, current_time, email))
                 conn.commit()
                 conn.close()
-
                 token = generate_token(email, is_admin=False)
                 response = make_response(jsonify({"status": "success", "redirect": url_for("lesson_list")}))
                 response.set_cookie("auth_token", token, httponly=True, samesite='Lax')
                 return response
-            
             else:
-                # Login Failed: Record IP na Muda
                 failed_attempts += 1
-                new_lockout_time = None
-                message = f"Invalid credential. Remain {5 - failed_attempts} attempts."
-
-                if failed_attempts >= 5:
-                    new_lockout_time = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
-                    message = "Account blocked for 1 hour."
-                
+                new_lockout_time = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S") if failed_attempts >= 5 else None
                 cursor.execute("UPDATE users SET failed_attempts=?, lockout_time=?, ip_address=?, last_attempt_time=? WHERE email=?", 
                                (failed_attempts, new_lockout_time, user_ip, current_time, email))
                 conn.commit()
                 conn.close()
-                return jsonify({"status": "error", "message": message})
+                return jsonify({"status": "error", "message": "Invalid credentials."})
+        
         else:
+            # 2. Kama user HAYUPO, rekodi kwenye table ya login_attempts
+            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time) VALUES (?, ?, ?)", 
+                           (email, user_ip, current_time))
+            conn.commit()
             conn.close()
             return jsonify({"status": "error", "message": "Invalid credentials."})
 
     return render_template("login.html")
-
 #====================================================
 #    GOOGLE OAUTH LOGIN ROUTES
 #====================================================
@@ -523,17 +521,23 @@ def change_password():
 
     return render_template("change_password.html")
 
+#============== ROUTE YA KUKAMATA LOGS================
 @app.route("/admiini/logs")
 def view_logs():
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute("SELECT email, failed_attempts, ip_address, last_attempt_time FROM users WHERE failed_attempts > 0 OR last_attempt_time IS NOT NULL")
-        logs = cursor.fetchall()
-        conn.close()
-        return render_template("logs.html", logs=logs)
-    except Exception as e:
-        return f"Database Error: {str(e)}" # Hii itakuonyesha kosa halisi kwenye browser
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Tunachukua logs zote (zile za user aliyepo na asiye na akaunti)
+    cursor.execute("""
+        SELECT email, 'Failed Login' as status, ip_address, last_attempt_time 
+        FROM users WHERE failed_attempts > 0
+        UNION ALL
+        SELECT email, 'Non-existent Account' as status, ip_address, attempt_time 
+        FROM login_attempts
+    """)
+    logs = cursor.fetchall()
+    conn.close()
+    return render_template("logs.html", logs=logs)
 # ========================================================
 # SECURED PROTECTED CLASSROOM PAGES 🔒
 # ========================================================
