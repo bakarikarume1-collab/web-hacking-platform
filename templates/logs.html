@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Attempts Logs</title>
+    <title>Admin Logs</title>
     <style>
         table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #333; color: white; }
+        .success { color: green; font-weight: bold; }
+        .failed { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -13,14 +15,14 @@
     <table>
         <tr>
             <th>Email</th>
-            <th>Failed Attempts</th>
+            <th>Status</th>
             <th>IP Address</th>
-            <th>Last Attempt Time</th>
+            <th>Time</th>
         </tr>
         {% for log in logs %}
         <tr>
             <td>{{ log[0] }}</td>
-            <td>{{ log[1] }}</td>
+            <td class="{{ 'success' if log[1] == 'Success' else 'failed' }}">{{ log[1] }}</td>
             <td>{{ log[2] }}</td>
             <td>{{ log[3] }}</td>
         </tr>
