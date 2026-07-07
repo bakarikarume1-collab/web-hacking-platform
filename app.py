@@ -1,7 +1,8 @@
 import sqlite3
 import hashlib
 import re      
-import html    
+import html
+import requests
 import os
 import secrets
 from dotenv import load_dotenv
@@ -9,7 +10,6 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, flash, make_response, redirect, url_for, jsonify, abort
 from flask_limiter import Limiter
-from flask_mail import Mail, Message
 
 load_dotenv()
 from authlib.integrations.flask_client import OAuth
@@ -41,20 +41,31 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "users.db")
 
 # ===== FLASK-MAIL CONFIGURATION =====
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'hackermrkarume@gmail.com'
-app.config['MAIL_PASSWORD'] = 'mezsjdxrytdntxkp'
-app.config['MAIL_DEFAULT_SENDER'] = 'hackermrkarume@gmail.com'
+def send_otp_via_api(email, otp):
+    api_key = os.environ.get("RESEND_API_KEY")
+    url = "https://api.resend.com/emails"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "from": "onboarding@resend.dev", 
+        "to": email,
+        "subject": "Your Reset Code",
+        "html": f"<p>Hello, your reset code from mr karume is: <strong>{otp}</strong>. It expires in 10 minutes.</p>"
+    }
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        return response.status_code == 200
+    except Exception:
+        return False
+        
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax', # Lax inaruhusu Google callback kufanya kazi
     SESSION_COOKIE_SECURE=False,   # Weka False ukiwa localhost (True ukiwa kwenye HTTPS)
     SESSION_TYPE='filesystem'
 )
-
-mail = Mail(app)
 
 
 def hash_password(password):
