@@ -938,39 +938,41 @@ nav ul li a:hover{
     color:#00ffff;
     cursor:pointer;
 }
-
-/* Mobile */
 @media (max-width:768px){
 
-    .menu-icon{
-        display:block;
-    }
-
     nav{
-        position:fixed;
-        top:0;
-        right:-260px;
-        width:250px;
-        height:100vh;
-        background:#111;
-        transition:.4s;
-        box-shadow:-5px 0 20px rgba(0,255,255,.3);
-        z-index:999;
+        position: fixed;
+        top: 70px;          /* inaanza chini ya navbar */
+        right: -230px;
+        width: 180px;       /* punguza upana */
+        height: auto;       /* sio screen nzima */
+        background: #111;
+        transition: .4s;
+        border-radius: 10px 0 0 10px;
+        padding: 10px 0;
     }
 
     nav.active{
-        right:0;
+        right: 0;
     }
 
     nav ul{
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        height:100%;
-        gap:30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;          /* punguza nafasi kati ya links */
+        padding: 0;
+        margin: 0;
+    }
+
+    nav ul li{
+        list-style: none;
     }
 
     nav ul li a{
-        font-size:20px;
+        font-size: 18px;
+        color: white;
+        text-decoration: none;
     }
 }
