@@ -180,7 +180,7 @@ def admin_required(f):
 
 @app.route("/")
 def home():
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("login"))
 
 # ===============================================
 #           REGISTER PAGE
