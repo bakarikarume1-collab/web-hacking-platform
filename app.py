@@ -390,12 +390,14 @@ def forgot_password():
         cursor.execute("SELECT * FROM users WHERE email=?", (email,))
         user = cursor.fetchone()
 
-        # 🔥 UKUTA WA KIUSALAMA (Enumeration Prevented): Hatuonyeshi kama email ipo au haipo!
+        # 🔥 UKUTA WA KIUSALAMA (Enumeration Prevented)
         if not user:
             conn.close()
-            flash("We have sent otp to your Email if Exist")
+            # Tunatoa ujumbe huu hata kama email haipo ili hacker asijue database yako
+            flash("We have sent an OTP to your email if it exists.")
             return render_template("forgot_password.html")
 
+        # Tunatengeneza OTP
         verification_code = str(secrets.randbelow(900000) + 100000)
         expiry_time = (datetime.now() + timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -403,25 +405,25 @@ def forgot_password():
         conn.commit()
         conn.close()
 
-        try:
-            msg = Message("reset code OTP ", recipients=[email])
-            msg.body = f"hello your reset code is: \n{verification_code}.\n it expires in 10 minutes."
-            mail.send(msg)
-
-            payload = {"reset_email": email, "otp_verified": False, "exp": datetime.utcnow() + timedelta(minutes=15)}
+        # 🔥 TUNATUMIA API YA RESEND (Inafanya kazi bila Timeout)
+        if send_otp_via_api(email, verification_code):
+            # Token generation
+            payload = {
+                "reset_email": email, 
+                "otp_verified": False, 
+                "exp": datetime.utcnow() + timedelta(minutes=15)
+            }
             reset_token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
             response = make_response(redirect(url_for("verify_otp")))
             response.set_cookie("reset_token", reset_token, httponly=True, samesite='Strict')
             return response
-
-        except Exception as e:
-            flash(f"Poor network connection: {str(e)}")
+        else:
+            # Hapa inamaanisha API call imefeli (angalia Logs za Render)
+            flash("System busy, please try again later.")
             return render_template("forgot_password.html")
 
     return render_template("forgot_password.html")
-
-
 
     #========================================================
     #           OTP VERIFICATION & PASSWORD CHANGE  
