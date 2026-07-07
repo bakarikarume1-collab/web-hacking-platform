@@ -988,18 +988,3 @@ nav ul li a:hover{
 .mobile-title{
     display:none;
 }
-
-@media (max-width:768px){
-
-    .logo{
-        display:none;
-    }
-
-    .mobile-title{
-        display:block;
-        color:#00ffff;
-        font-size:18px;
-        font-weight:bold;
-    }
-
-}
