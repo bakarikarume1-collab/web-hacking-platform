@@ -104,12 +104,14 @@ def init_db():
             last_attempt_time TEXT
         )
     """)
-    cursor.execute("""
+    # Katika init_db(), hakikisha una table hii:
+cursor.execute("""
     CREATE TABLE IF NOT EXISTS login_attempts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT,
         ip_address TEXT,
-        attempt_time TEXT
+        attempt_time TEXT,
+        status TEXT
     )
 """)
     conn.commit()
@@ -253,57 +255,34 @@ def register():
 #         LOGIN PAGE
 #=======================================
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
 def login():
     if request.method == "POST":
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
-        user_ip = request.remote_addr
+        
+        # Kupata IP halisi
+        user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(',')[0]
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         hashed_password = hash_password(password)
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
-        # 1. Angalia kama user yupo
-        cursor.execute("SELECT password, failed_attempts, lockout_time FROM users WHERE email=?", (email,))
+        cursor.execute("SELECT password FROM users WHERE email=?", (email,))
         user_record = cursor.fetchone()
 
-        if user_record:
-            db_password, failed_attempts, lockout_time = user_record
-
-            # Check Lockout
-            if lockout_time:
-                lockout_datetime = datetime.strptime(lockout_time, "%Y-%m-%d %H:%M:%S")
-                if datetime.now() < lockout_datetime:
-                    conn.close()
-                    return jsonify({"status": "error", "message": "Account temporarily blocked."})
-                else:
-                    cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL WHERE email=?", (email,))
-                    failed_attempts = 0
-
-            if db_password == hashed_password:
-                cursor.execute("UPDATE users SET failed_attempts=0, lockout_time=NULL, ip_address=?, last_attempt_time=? WHERE email=?", 
-                               (user_ip, current_time, email))
-                conn.commit()
-                conn.close()
-                token = generate_token(email, is_admin=False)
-                response = make_response(jsonify({"status": "success", "redirect": url_for("lesson_list")}))
-                response.set_cookie("auth_token", token, httponly=True, samesite='Lax')
-                return response
-            else:
-                failed_attempts += 1
-                new_lockout_time = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S") if failed_attempts >= 5 else None
-                cursor.execute("UPDATE users SET failed_attempts=?, lockout_time=?, ip_address=?, last_attempt_time=? WHERE email=?", 
-                               (failed_attempts, new_lockout_time, user_ip, current_time, email))
-                conn.commit()
-                conn.close()
-                return jsonify({"status": "error", "message": "Invalid credentials."})
-        
+        if user_record and user_record[0] == hashed_password:
+            # SUCCESS
+            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                           (email, user_ip, current_time, "Success"))
+            conn.commit()
+            conn.close()
+            # ... (Endelea na login logic yako)
+            return jsonify({"status": "success"})
         else:
-            # 2. Kama user HAYUPO, rekodi kwenye table ya login_attempts
-            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time) VALUES (?, ?, ?)", 
-                           (email, user_ip, current_time))
+            # FAILED
+            cursor.execute("INSERT INTO login_attempts (email, ip_address, attempt_time, status) VALUES (?, ?, ?, ?)", 
+                           (email, user_ip, current_time, "Failed"))
             conn.commit()
             conn.close()
             return jsonify({"status": "error", "message": "Invalid credentials."})
@@ -526,15 +505,8 @@ def change_password():
 def view_logs():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
-    # Tunachukua logs zote (zile za user aliyepo na asiye na akaunti)
-    cursor.execute("""
-        SELECT email, 'Failed Login' as status, ip_address, last_attempt_time 
-        FROM users WHERE failed_attempts > 0
-        UNION ALL
-        SELECT email, 'Non-existent Account' as status, ip_address, attempt_time 
-        FROM login_attempts
-    """)
+    # Tunachagua kila kitu kutoka table ya login_attempts
+    cursor.execute("SELECT email, status, ip_address, attempt_time FROM login_attempts ORDER BY attempt_time DESC")
     logs = cursor.fetchall()
     conn.close()
     return render_template("logs.html", logs=logs)
