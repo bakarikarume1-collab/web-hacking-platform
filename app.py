@@ -43,6 +43,14 @@ DB_PATH = os.path.join(BASE_DIR, "users.db")
 # ===== FLASK-MAIL CONFIGURATION =====
 def send_otp_via_api(email, otp):
     api_key = os.environ.get("RESEND_API_KEY")
+    
+    # Debug: Hii itakuambia kwenye Logs kama Key imesoma au la
+    print(f"DEBUG: API Key exists: {bool(api_key)}")
+    
+    if not api_key:
+        print("DEBUG: RESEND_API_KEY is missing in Environment Variables!")
+        return False
+
     url = "https://api.resend.com/emails"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -54,10 +62,16 @@ def send_otp_via_api(email, otp):
         "subject": "Your Reset Code",
         "html": f"<p>Hello, your reset code from mr karume is: <strong>{otp}</strong>. It expires in 10 minutes.</p>"
     }
+    
     try:
         response = requests.post(url, json=payload, headers=headers)
+        # Debug: Hii itakuambia response kutoka Resend
+        print(f"DEBUG: Resend Status Code: {response.status_code}")
+        print(f"DEBUG: Resend Response: {response.text}")
+        
         return response.status_code == 200
-    except Exception:
+    except Exception as e:
+        print(f"DEBUG: Exception during API call: {str(e)}")
         return False
         
 app.config.update(
