@@ -523,7 +523,7 @@ def change_password():
 
     return render_template("change_password.html")
 
-@app.route("/admin/logs")
+@app.route("/admiini/logs")
 def view_logs():
     # Hapa unaweza kuongeza "login required" ili mtu asiye admin asione logs
     conn = sqlite3.connect(DB_PATH)
