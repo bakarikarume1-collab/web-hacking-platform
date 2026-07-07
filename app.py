@@ -100,8 +100,8 @@ def init_db():
             current_level INTEGER DEFAULT 6,
             failed_attempts INTEGER DEFAULT 0,
             lockout_time TEXT,
-            ip_address (TEXT),
-            last_attempt_time (TEXT)
+            ip_address TEXT,
+            last_attempt_time TEXT
         )
     """)
     conn.commit()
