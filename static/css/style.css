@@ -951,6 +951,14 @@ nav ul li a:hover{
         border-radius: 10px 0 0 10px;
         padding: 10px 0;
     }
+    /* Mobile */
+@media (max-width:768px){
+
+    .logo{
+        display:none;
+    }
+
+}
 
     nav.active{
         right: 0;
@@ -975,4 +983,23 @@ nav ul li a:hover{
         color: white;
         text-decoration: none;
     }
+}
+
+.mobile-title{
+    display:none;
+}
+
+@media (max-width:768px){
+
+    .logo{
+        display:none;
+    }
+
+    .mobile-title{
+        display:block;
+        color:#00ffff;
+        font-size:18px;
+        font-weight:bold;
+    }
+
 }
