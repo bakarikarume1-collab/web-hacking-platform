@@ -319,7 +319,7 @@ def login():
                            (email, user_ip, current_time, "Failed"))
             conn.commit()
             conn.close()
-            return jsonify({"status": "error", "message": "Invalid credentials."})
+            return jsonify({"status": "error", "message": "user does not exist."})
 
     return render_template("login.html")
 #====================================================
